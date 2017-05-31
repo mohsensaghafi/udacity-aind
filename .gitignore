@@ -95,5 +95,12 @@ ENV/
 
 # End of https://www.gitignore.io/api/python
 
-heuristic_analysis.docx
-research_review.docx
+*.docx
+
+.DS_Store
+*.pyc
+*.zip
+*.json
+.idea/
+tests/.cache/v/cache/lastfailed
+.cache/v/cache/lastfailed
