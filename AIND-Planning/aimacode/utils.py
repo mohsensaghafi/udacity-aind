@@ -9,9 +9,6 @@ import os.path
 import random
 import math
 
-import heapq
-from collections import defaultdict
-
 # ______________________________________________________________________________
 # Functions on Sequences and Iterables
 
@@ -363,7 +360,6 @@ class Expr(object):
     def __init__(self, op, *args):
         self.op = str(op)
         self.args = args
-        self.__hash = None
 
     # Operator overloads
     def __neg__(self):      return Expr('-', self)
@@ -419,9 +415,7 @@ class Expr(object):
                 and self.op == other.op
                 and self.args == other.args)
 
-    def __hash__(self):
-        self.__hash = self.__hash or hash(self.op) ^ hash(self.args)
-        return self.__hash
+    def __hash__(self): return hash(self.op) ^ hash(self.args)
 
     def __repr__(self):
         op = self.op
@@ -577,38 +571,41 @@ class FIFOQueue(Queue):
 
 
 class PriorityQueue(Queue):
-    """A queue in which the minimum element (as determined by f and
-    order) is returned first.  Also supports dict-like lookup.
 
-    MODIFIED FROM AIMA VERSION
-        - Use heapq
-        - Use an additional dict to track membership
-        - remove __delitem__ (AIMA version contains error)
-    """
+    """A queue in which the minimum (or maximum) element (as determined by f and
+    order) is returned first. If order is min, the item with minimum f(x) is
+    returned first; if order is max, then it is the item with maximum f(x).
+    Also supports dict-like lookup."""
 
-    def __init__(self, order=None, f=lambda x: x):
+    def __init__(self, order=min, f=lambda x: x):
         self.A = []
-        self._A = defaultdict(lambda: 0)
+        self.order = order
         self.f = f
 
     def append(self, item):
-        heapq.heappush(self.A, (self.f(item), item))
-        self._A[item] += 1
+        bisect.insort(self.A, (self.f(item), item))
 
     def __len__(self):
         return len(self.A)
 
     def pop(self):
-        _, item = heapq.heappop(self.A)
-        self._A[item] -= 1
-        return item
+        if self.order == min:
+            return self.A.pop(0)[1]
+        else:
+            return self.A.pop()[1]
 
     def __contains__(self, item):
-        return self._A[item] > 0
+        return any(item == pair[1] for pair in self.A)
 
     def __getitem__(self, key):
-        if self._A[key] > 0:
-            return key
+        for _, item in self.A:
+            if item == key:
+                return item
+
+    def __delitem__(self, key):
+        for i, (value, item) in enumerate(self.A):
+            if item == key:
+                self.A.pop(i)
 
 # ______________________________________________________________________________
 # Useful Shorthands

@@ -23,7 +23,8 @@ Instead, you will implement domain-independent heuristics.
 
 ## Environment requirements
 - Python 3.4 or higher
-- Starter code includes a copy of [companion code](https://github.com/aimacode) from the Stuart Russel/Norvig AIMA text.  
+- Starter code includes a copy of [companion code](https://github.com/aimacode) 
+for the Stuart Russel/Norvig AIMA text.  
 
 
 ## Project Details
@@ -90,7 +91,7 @@ Goal(At(C1, JFK) ∧ At(C3, JFK) ∧ At(C2, SFO) ∧ At(C4, SFO))
 #### TODO: Experiment and document metrics for non-heuristic planning solution searches
 * Run uninformed planning searches for `air_cargo_p1`, `air_cargo_p2`, and `air_cargo_p3`; provide metrics on number of node expansions required, number of goal tests, time elapsed, and optimality of solution for each search algorithm. Include the result of at least three of these searches, including breadth-first and depth-first, in your write-up (`breadth_first_search` and `depth_first_graph_search`). 
 * If depth-first takes longer than 10 minutes for Problem 3 on your system, stop the search and provide this information in your report.
-* Use the `run_search` script for your data collection: from the command line type `python run_search.py -h` to learn more.
+* Use the `run_search` script for your data collection: from the command line type `python run_search -h` to learn more.
 
 >#### Why are we setting the problems up this way?  
 >Progression planning problems can be 
@@ -137,7 +138,7 @@ classes, and the search methods in the AIMA library.
 
 #### TODO: Experiment and document: metrics of A* searches with these heuristics
 * Run A* planning searches using the heuristics you have implemented on `air_cargo_p1`, `air_cargo_p2` and `air_cargo_p3`. Provide metrics on number of node expansions required, number of goal tests, time elapsed, and optimality of solution for each search algorithm and include the results in your report. 
-* Use the `run_search` script for this purpose: from the command line type `python run_search.py -h` to learn more.
+* Use the `run_search` script for this purpose: from the command line type `python run_search -h` to learn more.
 
 >#### Why a Planning Graph?
 >The planning graph is somewhat complex, but is useful in planning because it is a polynomial-size approximation of the exponential tree that represents all possible paths. The planning graph can be used to provide automated admissible heuristics for any domain.  It can also be used as the first step in implementing GRAPHPLAN, a direct planning algorithm that you may wish to learn more about on your own (but we will not address it here).
@@ -148,7 +149,7 @@ classes, and the search methods in the AIMA library.
 ### Part 3: Written Analysis
 #### TODO: Include the following in your written analysis.  
 - Provide an optimal plan for Problems 1, 2, and 3.
-- Compare and contrast non-heuristic search result metrics (optimality, time elapsed, number of node expansions) for Problems 1,2, and 3. Include breadth-first, depth-first, and at least one other uninformed non-heuristic search in your comparison; Your third choice of non-heuristic search may be skipped for Problem 3 if it takes longer than 10 minutes to run, but a note in this case should be included.
+- Compare and contrast non-heuristic search result metrics (optimality, time elapsed, number of node expansions) for Problems 1,2, and 3. Include breadth-first, depth-first, and at least one other uninformed non-heuristic search in your comparison; Depth-first may be skipped for Problem 3 if it takes longer than 10 minutes to run, but a note in this case should be included.
 - Compare and contrast heuristic search result metrics using A* with the "ignore preconditions" and "level-sum" heuristics for Problems 1, 2, and 3.
 - What was the best heuristic used in these problems?  Was it better than non-heuristic search planning methods for all problems?  Why or why not?
 - Provide tables or other visual aids as needed for clarity in your discussion.
@@ -156,20 +157,7 @@ classes, and the search methods in the AIMA library.
 ## Examples and Testing:
 - The planning problem for the "Have Cake and Eat it Too" problem in the book has been
 implemented in the `example_have_cake` module as an example.
-- The `tests` directory includes `unittest` test cases to evaluate your implementations. All tests should pass before you submit your project for review. From the AIND-Planning directory command line:
-    - `python -m unittest tests.test_my_air_cargo_problems`
-    - `python -m unittest tests.test_my_planning_graph`
-- The `run_search` script is provided for gathering metrics for various search methods on any or all of the problems and should be used for this purpose.
+- The `tests` directory includes `unittest` test cases to evaluate your implementations. All tests should pass before you submit your project for review.
+- Use the `run_search` script is provided for gathering metrics for various search methods on any or all of the problems and should be used for this purpose.
 
-## Submission
-Before submitting your solution to a reviewer, you are required to submit your project to Udacity's Project Assistant, which will provide some initial feedback.  
 
-The setup is simple.  If you have not installed the client tool already, then you may do so with the command `pip install udacity-pa`.  
-
-To submit your code to the project assistant, run `udacity submit` from within the top-level directory of this project.  You will be prompted for a username and password.  If you login using google or facebook, visit [this link](https://project-assistant.udacity.com/auth_tokens/jwt_login) for alternate login instructions.
-
-This process will create a zipfile in your top-level directory named cargo_planning-<id>.zip.  This is the file that you should submit to the Udacity reviews system.
-
-## Improving Execution Time
-
-The exercises in this project can take a *long* time to run (from several seconds to a several hours) depending on the heuristics and search algorithms you choose, as well as the efficiency of your own code.  (You may want to stop and profile your code if runtimes stretch past a few minutes.) One option to improve execution time is to try installing and using [pypy3](http://pypy.org/download.html) -- a python JIT, which can accelerate execution time substantially.  Using pypy is *not* required (and thus not officially supported) -- an efficient solution to this project runs in very reasonable time on modest hardware -- but working with pypy may allow students to explore more sophisticated problems than the examples included in the project.
