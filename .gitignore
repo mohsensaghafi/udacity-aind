@@ -96,7 +96,7 @@ ENV/
 # End of https://www.gitignore.io/api/python
 
 *.docx
-*.xslx
+*.xlsx
 *.txt
 
 .DS_Store
