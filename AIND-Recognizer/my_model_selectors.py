@@ -27,6 +27,7 @@ class ModelSelector(object):
         self.max_n_components = max_n_components
         self.random_state = random_state
         self.verbose = verbose
+        self.n_components = range(self.min_n_components, self.max_n_components + 1)
 
     def select(self):
         raise NotImplementedError
@@ -68,6 +69,7 @@ class SelectorBIC(ModelSelector):
     Bayesian information criteria: BIC = -2 * logL + p * logN
     """
 
+
     def select(self):
         """ select the best model for self.this_word based on
         BIC score for n between self.min_n_components and self.max_n_components
@@ -75,9 +77,26 @@ class SelectorBIC(ModelSelector):
         :return: GaussianHMM object
         """
         warnings.filterwarnings("ignore", category=DeprecationWarning)
+        bic_scores = []
+        try:
+            for n in self.n_components:
+                # BIC = −2 log L + p log N
+                # L = is the likelihood of the fitted model
+                # p = is the number of parameters
+                # N = is the number of data points
+                model = self.base_model(n)
+                log_l = model.score(self.X, self.lengths)
+                p     = n ** 2 + 2 * n * model.n_features - 1
+                log_n = math.log(n)
+                bic_score = (-2 * log_l) + (p * log_n)
+                bic_scores.append(bic_score)
+        except Exception as e:
+            pass
 
-        # TODO implement model selection based on BIC scores
-        raise NotImplementedError
+        states = self.n_constant
+        if bic_scores:
+            states = self.n_components[np.argmax(bic_scores)] 
+        return self.base_model(states)
 
 
 class SelectorDIC(ModelSelector):
@@ -92,8 +111,25 @@ class SelectorDIC(ModelSelector):
     def select(self):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-        # TODO implement model selection based on DIC scores
-        raise NotImplementedError
+        dic_scores = []
+        log_ls = []
+        try:
+            for n_component in self.n_components:
+                model = self.base_model(n_component)
+                log_ls.append(model.score(self.X, self.lengths))
+            sum_log_ls = sum(log_ls)
+            m = len(self.n_components)
+            for log_l in log_ls:
+                # DIC = log(P(X(i)) - 1/(M-1)SUM(log(P(X(all but i))
+                other_l = (sum_log_ls - log_l) / (m - 1)
+                dic_scores.append(log_l - other_l)
+        except Exception as e:
+            pass
+
+        states = self.n_constant
+        if dic_scores:
+            states = self.n_components[np.argmax(dic_scores)]
+        return self.base_model(states)
 
 
 class SelectorCV(ModelSelector):
@@ -104,5 +140,27 @@ class SelectorCV(ModelSelector):
     def select(self):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-        # TODO implement model selection using CV
-        raise NotImplementedError
+        mean_scores = []
+        # save reference to 'KFold'
+        split_method = KFold()
+        try:
+            for n_component in self.n_components:
+                model = self.base_model(n_component)
+                
+                # calculate model mean scores
+                fold_scores = [] 
+                for _, test_idx in split_method.split(self.sequences):
+                    # get test sequences
+                    test_X, test_length = combine_sequences(test_idx, self.sequences)
+                    # record model score
+                    fold_scores.append(model.score(test_X, test_length))
+
+                # add mean of all fold scores
+                mean_scores.append(np.mean(fold_scores))
+        except Exception as e:
+            pass
+
+        states = self.n_constant
+        if mean_scores:
+            states = self.n_components[np.argmax(mean_scores)]
+        return self.base_model(states)

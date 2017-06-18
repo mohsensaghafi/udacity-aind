@@ -20,6 +20,28 @@ def recognize(models: dict, test_set: SinglesData):
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     probabilities = []
     guesses = []
-    # TODO implement the recognizer
+
+    X_lengths = test_set.get_all_Xlengths()
+    for X, lengths in X_lengths.values():
+        log_l = {} # likelihood of the word
+        max_score = float("-inf") # max score as recognizer iterates the list
+        best_guess = None # best guess as recognizer iterates the list
+        for word, model in models.items():
+            try:
+                # Score word using model
+                word_score = model.score(X, lengths)
+                log_l[word] = word_score
+
+                if word_score > max_score:
+                    max_score = word_score
+                    best_guess = word
+            except:
+                # Unable to process word
+                log_l[word] = float("-inf")
+
+        guesses.append(best_guess)
+        probabilities.append(log_l)
+
     # return probabilities, guesses
-    raise NotImplementedError
+    return probabilities, guesses
+    
