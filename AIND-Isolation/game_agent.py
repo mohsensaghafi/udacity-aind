@@ -34,7 +34,7 @@ def custom_score(game, player):
     -------
     float
         The heuristic value of the current game state to the specified player.
-    """    
+    """
     if game.is_loser(player):
         return float("-inf")
 
@@ -78,7 +78,7 @@ def custom_score_2(game, player):
 
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float( 10 * own_moves - opp_moves)
+    return float(10 * own_moves - opp_moves)
 
 def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -108,8 +108,8 @@ def custom_score_3(game, player):
     if game.is_winner(player):
         return float("inf")
 
-    x1,y1 = game.get_player_location(player);
-    x2,y2 = game.get_player_location(game.get_opponent(player));
+    x1, y1 = game.get_player_location(player)
+    x2, y2 = game.get_player_location(game.get_opponent(player))
     return float((x1 - x2)**2 + (y1 - y2)**2)
 
 class IsolationPlayer:
@@ -231,10 +231,10 @@ class MinimaxPlayer(IsolationPlayer):
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
-        _,move = self.minimax_recursive(game, depth,True)
+        _, move = self.minimax_recursive(game, depth, True)
         return move
 
-    def minimax_recursive(self, game, depth,maximizing_player):
+    def minimax_recursive(self, game, depth, maximizing_player):
         """Implement the minimax search algorithm as described in the lectures.
 
         Parameters
@@ -271,28 +271,28 @@ class MinimaxPlayer(IsolationPlayer):
         best_move = None
         if legal_moves:
             best_move = legal_moves[0]
-        if maximizing_player:            
+        if maximizing_player:
             if not legal_moves:
-                return float("-inf"),(-1,-1)
-            if depth == 0:     
-                return self.score(game,game.active_player),(-1,-1)
+                return float("-inf"), (-1, -1)
+            if depth == 0:
+                return self.score(game, game.active_player), (-1, -1)
             else:
                 best_score = float("-inf")
                 for m in legal_moves:
-                    score,_ = self.minimax_recursive(game.forecast_move(m), depth-1, not maximizing_player)
+                    score, _ = self.minimax_recursive(game.forecast_move(m), depth-1, not maximizing_player)
                     if score > best_score:
-                        best_score , best_move = score, m 
+                        best_score, best_move = score, m
         else:
             if not legal_moves:
-                return float("inf"),(-1,-1)
+                return float("inf"), (-1, -1)
             if depth == 0:
-                return self.score(game,game.inactive_player),(-1,-1)
+                return self.score(game, game.inactive_player), (-1, -1)
             else:
                 best_score = float("inf")
                 for m in legal_moves:
-                    score,_ = self.minimax_recursive(game.forecast_move(m), depth-1, not maximizing_player)
+                    score, _ = self.minimax_recursive(game.forecast_move(m), depth-1, not maximizing_player)
                     if score < best_score:
-                        best_score , best_move = score, m 
+                        best_score, best_move = score, m
         return best_score, best_move
 
 class AlphaBetaPlayer(IsolationPlayer):
@@ -344,7 +344,7 @@ class AlphaBetaPlayer(IsolationPlayer):
             else:
                 best_move = legal_moves[0]
             while True:
-                best_move = self.alphabeta(game,depth)                
+                best_move = self.alphabeta(game, depth)
                 depth += 1
             # return self.alphabeta(game, self.search_depth)
 
@@ -401,8 +401,7 @@ class AlphaBetaPlayer(IsolationPlayer):
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
-        
-        _,move = self.alphabeta_recursive(game, depth)
+        _, move = self.alphabeta_recursive(game, depth)
         return move
 
     def alphabeta_recursive(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
@@ -444,38 +443,38 @@ class AlphaBetaPlayer(IsolationPlayer):
                 evaluation function directly.
         """
         legal_moves = game.get_legal_moves(game.active_player)
-        best_move = (-1,-1)
+        best_move = (-1, -1)
         if legal_moves:
             best_move = legal_moves[0]
         if self.time_left() < self.TIMER_THRESHOLD:
             raise SearchTimeout()
         if maximizing_player:
             if not legal_moves:
-                return float("-inf"),(-1,-1)
-            if depth == 0:    
-                return self.score(game,game.active_player),(-1,-1)
+                return float("-inf"), (-1, -1)
+            if depth == 0:
+                return self.score(game, game.active_player), (-1, -1)
             else:
                 best_score = float("-inf")
                 for m in legal_moves:
-                    score,_=self.alphabeta_recursive(game.forecast_move(m), depth-1, alpha, beta, not maximizing_player)
+                    score, _=self.alphabeta_recursive(game.forecast_move(m), depth-1, alpha, beta, not maximizing_player)
                     if score > best_score:
-                        best_score, best_move = score , m                         
-                    alpha = max(alpha,best_score)
+                        best_score, best_move = score, m
+                    alpha = max(alpha, best_score)
                     if beta <= best_score:
                         break
-                return best_score,best_move
+                return best_score, best_move
         else:
             if not legal_moves:
-                return float("inf"),(-1,-1)
+                return float("inf"), (-1, -1)
             if depth == 0:
-                return self.score(game,game.inactive_player),(-1,-1)                
+                return self.score(game, game.inactive_player), (-1, -1)                
             else:
                 best_score = float("inf")
                 for m in legal_moves:
-                    score,_=self.alphabeta_recursive(game.forecast_move(m), depth-1, alpha, beta, not maximizing_player)
+                    score, _ = self.alphabeta_recursive(game.forecast_move(m), depth-1, alpha, beta, not maximizing_player)
                     if score < best_score:
-                        best_score, best_move= score, m                        
-                    beta = min(beta,best_score)
+                        best_score, best_move= score, m
+                    beta = min(beta, best_score)
                     if best_score <= alpha:
                         break
-                return best_score,best_move 
+                return best_score, best_move
